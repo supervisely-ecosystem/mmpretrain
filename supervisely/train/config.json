@@ -1,0 +1,35 @@
+{
+  "name": "Train MMClassification",
+  "type": "app",
+  "categories": [
+    "neural network",
+    "images",
+    "classification",
+    "train"
+  ],
+  "description": "Dashboard to configure, start and monitor training",
+  "docker_image": "supervisely/mmpretrain:1.0.0",
+  "instance_version": "6.12.34",
+  "main_script": "supervisely/train/src/sly_train.py",
+  "gui_template": "supervisely/train/src/gui.html",
+  "task_location": "workspace_tasks",
+  "need_gpu": true,
+  "gpu": "required",
+  "icon": "https://i.imgur.com/wc2STfP.png",
+  "icon_cover": true,
+  "integrated_into": [
+    "panel"
+  ],
+  "context_menu": {
+    "target": [
+      "images_project"
+    ],
+    "context_root": "Neural Networks",
+    "context_category": "MM Classification"
+  },
+  "poster": "https://user-images.githubusercontent.com/106374579/186635809-18aaf088-44a0-4ccc-8e68-f0ac97ce603b.png",
+  "community_agent": false,
+  "license": {
+    "type": "Apache-2.0"
+  }
+}
