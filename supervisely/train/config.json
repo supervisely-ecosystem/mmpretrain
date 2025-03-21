@@ -1,5 +1,5 @@
 {
-  "name": "Train MMClassification",
+  "name": "Train MMClassification V2 (MMPretrain)",
   "type": "app",
   "categories": [
     "neural network",
