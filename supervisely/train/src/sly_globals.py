@@ -4,6 +4,7 @@ from pathlib import Path
 
 import sly_functions as func
 from supervisely.app.v1.app_service import AppService
+from supervisely.nn.artifacts.mmclassification import MMClassification
 
 import supervisely as sly
 
@@ -35,6 +36,7 @@ team_id = sly.env.team_id()
 workspace_id = sly.env.workspace_id()
 project_id = sly.env.project_id()
 
+sly_mmcls = MMClassification(team_id)
 project_stats = api.project.get_stats(project_id)
 project_info = api.project.get_info_by_id(project_id)
 if project_info is None:  # for debug
