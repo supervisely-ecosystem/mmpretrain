@@ -2,7 +2,7 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "Train MMPretrain",
+			"name": "Train MMClassification V2",
 			"type": "debugpy",
 			"request": "launch",
 			"program": "${workspaceFolder}/supervisely/train/src/sly_train.py",
@@ -15,7 +15,7 @@
 			"args": []
 		},
 		{
-			"name": "Serve MMPretrain",
+			"name": "Serve MMClassification V2",
 			"type": "debugpy",
 			"request": "launch",
 			"program": "${workspaceFolder}/supervisely/serve/src/sly_serve.py",

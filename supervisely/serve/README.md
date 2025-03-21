@@ -1,7 +1,7 @@
 <div align="center" markdown>
 <img src="https://user-images.githubusercontent.com/48245050/182573540-d975d0e5-d71a-42e6-aa1a-60efc80394ea.png"/>
 
-# Serve MMClassification
+# Serve MMClassification V2 (MMPretrain)
 
 <p align="center">
   <a href="#Overview">Overview</a> •
@@ -10,24 +10,22 @@
   <a href="#For-Developers">For Developers</a>
 </p>
 
-[![](https://img.shields.io/badge/supervisely-ecosystem-brightgreen)](https://ecosystem.supervisely.com/apps/supervisely-ecosystem/mmclassification/supervisely/serve)
+[![](https://img.shields.io/badge/supervisely-ecosystem-brightgreen)](https://ecosystem.supervisely.com/apps/supervisely-ecosystem/mmpretrain/supervisely/serve)
 [![](https://img.shields.io/badge/slack-chat-green.svg?logo=slack)](https://supervisely.com/slack)
-![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/supervisely-ecosystem/mmclassification)
-[![views](https://app.supervisely.com/img/badges/views/supervisely-ecosystem/mmclassification/supervisely/serve.png)](https://supervisely.com)
-[![runs](https://app.supervisely.com/img/badges/runs/supervisely-ecosystem/mmclassification/supervisely/serve.png)](https://supervisely.com)
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/supervisely-ecosystem/mmpretrain)
+[![views](https://app.supervisely.com/img/badges/views/supervisely-ecosystem/mmpretrain/supervisely/serve.png)](https://supervisely.com)
+[![runs](https://app.supervisely.com/img/badges/runs/supervisely-ecosystem/mmpretrain/supervisely/serve.png)](https://supervisely.com)
 
 </div>
 
 # Overview
 
-App deploys MMClassification model trained in Supervisely as REST API service. Serve app is the simplest way how any model 
-can be integrated into Supervisely. Once model is deployed, user gets the following benefits:
+App deploys MMPretrain model trained in Supervisely as REST API service. Serve app is the simplest way how any model can be integrated into Supervisely. Once model is deployed, user gets the following benefits:
 
 1. Use out of the box apps for inference - [AI assisted classification and tagging](https://ecosystem.supervisely.com/apps/ai-assisted-classification)
 2. Apps from Supervisely Ecosystem can use NN predictions: for visualization, for analysis, performance evaluation, etc ...
 3. Communicate with NN in custom python script (see section <a href="#For-developers">for developers</a>)
-4. App illustrates how to use NN weights. For example: you can train model in Supervisely, download its weights and use 
-   them the way you want outside Supervisely.
+4. App illustrates how to use NN weights. For example: you can train model in Supervisely, download its weights and use them the way you want outside Supervisely.
 
 Watch usage demo:
 
@@ -35,18 +33,17 @@ Watch usage demo:
     <img src="https://i.imgur.com/tohTu5R.png" alt="SLY_EMBEDED_VIDEO_LINK"  style="max-width:70%;">
 </a>
 
-
 # How To Run
 
-1. Go to the directory with weights in `Team Files`. Training app saves results to the 
+1. Go to the directory with weights in `Team Files`. Training app saves results to the
    directory: `/mmclassification/<session id>_<training project name>/checkpoints`. Then right click to weights `.pth` file,
    for example: `/mmclassification/6181_synthetic products v2/checkpoints/latest.pth`
-   
+
 <img src="https://i.imgur.com/cmEzYGr.gif"/>
 
-2. Run `Serve MMClassification` app from context menu
+2. Run `Serve MMClassification V2 (MMPretrain)` app from context menu
 
-3. Select device, both `gpu` and `cpu` are supported. Also in advanced section you can 
+3. Select device, both `gpu` and `cpu` are supported. Also in advanced section you can
 change what agent should be used for deploy.
 
 4. Press `Run` button.
@@ -59,11 +56,9 @@ change what agent should be used for deploy.
 
 <img src="https://i.imgur.com/7eVkiIm.png"/>
 
-
 # How To Use Your Trained Model Outside Supervisely
 
-You can use your trained models outside Supervisely platform without any dependencies on Supervisely SDK. You just need to download config files and model weights (.pth) from Team Files, and then you can build and use the model as a normal model in mmcls/mmpretrain. See this [Jupyter Notebook](https://github.com/supervisely-ecosystem/mmclassification/blob/master/inference_outside_supervisely.ipynb) for details.
-
+You can use your trained models outside Supervisely platform without any dependencies on Supervisely SDK. You just need to download config files and model weights (.pth) from Team Files, and then you can build and use the model as a normal model in mmcls/mmpretrain.
 
 # For Developers
 
@@ -71,8 +66,8 @@ This python example illustrates available methods of the deployed model. Now you
 your python script. This is the way how other Supervisely Apps can communicate with NNs. And also you can use serving 
 app as an example - how to use downloaded NN weights outside Supervisely.
 
+## Python Example: how to communicate with deployed model
 
-## Python Example: how to communicate with deployed model 
 ```python
 import json
 import supervisely as sly
@@ -146,7 +141,8 @@ Information about deployed model:
 ```
 
 Model produces following tags:
-```
+
+```text
 ProjectMeta:
 
 Tags
@@ -162,6 +158,7 @@ Tags
 ```
 
 Image examples (urls) for predicted tags:
+
 ```json
 {
    "cat": [
@@ -180,6 +177,7 @@ Image examples (urls) for predicted tags:
 ```
 
 Predictions example (predictions are sorted by score):
+
 ```json
 [
     {
