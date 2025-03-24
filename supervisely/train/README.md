@@ -1,6 +1,6 @@
 <div align="center" markdown>
 
-<img src="https://github.com/user-attachments/assets/cf99c99c-1214-4ca9-b010-49bf0d0631ce"/>
+<img src="https://github.com/user-attachments/assets/93780092-db4b-44e2-85b4-96a647178f35"/>
 
 # Train MMClassification V2 (MMPretrain)
 
