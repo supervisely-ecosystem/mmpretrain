@@ -1,5 +1,5 @@
 <div align="center" markdown>
-<img src="https://user-images.githubusercontent.com/48245050/182573540-d975d0e5-d71a-42e6-aa1a-60efc80394ea.png"/>
+<img src="https://github.com/user-attachments/assets/9f799976-8998-433f-afe3-d5d4bef3463f"/>
 
 # Serve MMClassification V2 (MMPretrain)
 
