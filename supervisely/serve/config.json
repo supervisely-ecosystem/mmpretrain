@@ -17,7 +17,8 @@
     "batch_size": 256
   },
   "task_location": "application_sessions",
-  "icon": "https://i.imgur.com/ylYHWiY.png",
+  "poster": "https://github.com/user-attachments/assets/9f799976-8998-433f-afe3-d5d4bef3463f",
+  "icon": "https://github.com/user-attachments/assets/616e9bf9-26f9-4210-9598-f125e4dc02e5",
   "icon_cover": true,
   "isolate": true,
   "need_gpu": false,
@@ -31,7 +32,6 @@
       "files_file"
     ]
   },
-  "poster": "https://user-images.githubusercontent.com/48245050/182573540-d975d0e5-d71a-42e6-aa1a-60efc80394ea.png",
   "community_agent": false,
   "license": {
     "type": "Apache-2.0"

@@ -388,29 +388,6 @@ def get_models_list():
             "top1": "86.39",
             "top5": "97.83",
         },
-        # SwinTransformerv2 val metrics are all 0
-        {
-            "modelConfig": "configs/_base_/models/swin_transformer_v2/base_256.py",
-            "config": "configs/swin_transformer_v2/swinv2-base-w16_in21k-pre_16xb64_in1k-256px.py",
-            "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/swin-v2/swinv2-base-w16_in21k-pre_3rdparty_in1k-256px_20220803-8d7aa8ad.pth",
-            "model": "SwinTransformerV2 Base (256px)",
-            "collection": "SwinTransformer",
-            "params": "87.92",
-            "flops": "15.14",
-            "top1": "86.17",
-            "top5": "97.88",
-        },
-        {
-            "modelConfig": "configs/_base_/models/swin_transformer_v2/large_256.py",
-            "config": "configs/swin_transformer_v2/swinv2-large-w16_in21k-pre_16xb64_in1k-256px.py",
-            "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/swin-v2/swinv2-large-w16_in21k-pre_3rdparty_in1k-256px_20220803-c40cbed7.pth",
-            "model": "SwinTransformerV2 Large (256px)",
-            "collection": "SwinTransformer",
-            "params": "196.75",
-            "flops": "33.86",
-            "top1": "86.93",
-            "top5": "98.06",
-        },
         # DeiT3
         {
             "modelConfig": "configs/_base_/models/deit3/deit3-small-p16-224.py",

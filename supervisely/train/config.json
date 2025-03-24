@@ -15,7 +15,8 @@
   "task_location": "workspace_tasks",
   "need_gpu": true,
   "gpu": "required",
-  "icon": "https://i.imgur.com/wc2STfP.png",
+  "poster": "https://github.com/user-attachments/assets/cf99c99c-1214-4ca9-b010-49bf0d0631ce",
+  "icon": "https://github.com/user-attachments/assets/865b79cc-a4f8-4bf7-8e94-a469a05b5652",
   "icon_cover": true,
   "integrated_into": [
     "panel"
@@ -27,7 +28,6 @@
     "context_root": "Neural Networks",
     "context_category": "MM Classification"
   },
-  "poster": "https://user-images.githubusercontent.com/106374579/186635809-18aaf088-44a0-4ccc-8e68-f0ac97ce603b.png",
   "community_agent": false,
   "license": {
     "type": "Apache-2.0"
