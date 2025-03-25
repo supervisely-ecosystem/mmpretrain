@@ -99,7 +99,6 @@ def perform_inference_batch(model, images_nps, topn=5):
         results, is_datasample = _predict_with_model_batch(model, input_tensors, data_samples)
         batch_results = _process_batch_results(results, is_datasample, topn)
         inference_results.extend(batch_results)
-        
     return inference_results
 
 def _predict_with_model(model, input_tensor):
@@ -134,30 +133,27 @@ def _preprocess_image(img):
     return preprocess(image).unsqueeze(0).to(g.torch_device)
 
 
-def _process_datasample_results(results, topn=5):
-    output_list = []
-    for sample in results:
-        if hasattr(sample, 'pred_score'):
-            scores = sample.pred_score.cpu().numpy()
-            if topn is None:  # multi-label
-                indices = np.where(scores > 0.5)[0]
-                for idx in indices:
-                    class_name = g.gt_index_to_labels.get(idx, None)
-                    output_list.append({
-                        "label": int(idx),
-                        "score": float(scores[idx]),
-                        "class": class_name
-                    })
-            else:  # single-label top-n
-                top_indices = scores.argsort()[-topn:][::-1]
-                for idx in top_indices:
-                    class_name = g.gt_index_to_labels.get(idx, None)
-                    output_list.append({
-                        "label": int(idx),
-                        "score": float(scores[idx]),
-                        "class": class_name
-                    })
-    return output_list
+def _process_datasample_results(sample, topn=5):
+    if hasattr(sample, 'pred_score'):
+        scores = sample.pred_score.cpu().numpy()
+        if topn is None:  # multi-label
+            indices = np.where(scores > 0.5)[0]
+            for idx in indices:
+                class_name = g.gt_index_to_labels.get(idx, None)
+                return {
+                    "label": [int(idx)],
+                    "score": [float(scores[idx])],
+                    "class": [class_name]
+                }
+        else:  # single-label top-n
+            top_indices = scores.argsort()[-topn:][::-1]
+            for idx in top_indices:
+                class_name = g.gt_index_to_labels.get(idx, None)
+                return {
+                    "label": [int(idx)],
+                    "score": [float(scores[idx])],
+                    "class": [class_name]
+                }
 
 
 def _process_tensor_results(results, topn=5):
@@ -193,7 +189,7 @@ def _predict_with_model_batch(model, input_tensor, data_samples):
 
 def _process_batch_results(results, is_datasample, topn=5):
     if is_datasample:
-        return [_process_datasample_results([sample], topn) for sample in results]
+        return [_process_datasample_results(sample, topn) for sample in results]
     else:
         if isinstance(results, torch.Tensor):
             batch_scores = results.cpu().numpy()

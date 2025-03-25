@@ -1,3 +1,4 @@
+import cv2
 import os
 import functools
 from functools import lru_cache
@@ -102,7 +103,6 @@ def inference_image_path(image_path, context, state, app_logger):
 
     return res
 
-
 @g.my_app.callback("inference_image_url")
 @sly.timeit
 @send_error_data
@@ -147,19 +147,10 @@ def inference_batch_ids(api: sly.Api, task_id, context, state, app_logger):
     sly.logger.info("inference batch ids called:", extra={"state": state})
 
     # load images
-    images_nps: np.array = f.get_nps_images(images_ids=state["images_ids"])
-    images_to_process: np.array = f.crop_images(images_nps=images_nps,
-                                                rectangles=state.get('rectangles'),
-                                                padding=state.get('pad', 0))
-
-    # inference images
-    images_indexes_to_process = np.asarray([index for index, img_np in enumerate(images_to_process)
-                                            if img_np is not None])
-    inference_results = nn_utils.perform_inference_batch(model=g.model,
-                                                       images_nps=images_to_process[images_indexes_to_process],
-                                                       topn=state.get('topn', 5))
-
-    # return output
+    images_nps = f.get_nps_images(images_ids=state["images_ids"])
+    images_to_process = f.crop_images(images_nps=images_nps, rectangles=state.get('rectangles'), padding=state.get('pad', 0))
+    images_indexes_to_process = [index for index, img_np in enumerate(images_to_process) if img_np is not None]
+    inference_results = nn_utils.perform_inference_batch(model=g.model, images_nps=images_to_process, topn=state.get('topn', 5))
     results = [None for _ in images_nps]
     for index, row in enumerate(inference_results):
         results[images_indexes_to_process[index]] = row
@@ -203,10 +194,10 @@ def _inference_images_ids_async(api: sly.Api, state: Dict, inference_request_uui
                 )
                 result = []
                 break
-            images_nps = np.asarray([g.cache.download_image(api, im_id) for im_id in batch_ids])
+            images_nps = [g.cache.download_image(api, im_id) for im_id in batch_ids]
             images_to_process = f.crop_images(images_nps=images_nps, rectangles=rectangles, padding=padding)
-            images_indexes_to_process = np.asarray([index for index, img_np in enumerate(images_to_process) if img_np is not None])
-            inference_results = nn_utils.perform_inference_batch(model=g.model, images_nps=images_to_process[images_indexes_to_process], topn=topn)
+            images_indexes_to_process = [index for index, img_np in enumerate(images_to_process) if img_np is not None]
+            inference_results = nn_utils.perform_inference_batch(model=g.model, images_nps=images_to_process, topn=topn)
 
             batch_results = [None for _ in images_nps]
             for index, row in enumerate(inference_results):
