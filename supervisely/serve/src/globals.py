@@ -41,7 +41,8 @@ task_id = my_app.task_id
 team_id = sly.env.team_id()
 workspace_id = sly.env.workspace_id()
 
-device = torch.device(os.environ["modal.state.device"])
+device = os.environ["modal.state.device"]
+torch_device = torch.device(device)
 remote_weights_path = os.environ["modal.state.slyFile"]
 batch_size = int(os.getenv("modal.state.batch_size", 256))
 

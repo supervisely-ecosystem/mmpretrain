@@ -74,9 +74,9 @@ def deploy_model():
         g.cls_mode = cfg.classification_mode
     
     model = MODELS.build(cfg.model)
-    checkpoint = load_checkpoint(model, g.local_weights_path, map_location=g.device)
+    checkpoint = load_checkpoint(model, g.local_weights_path, map_location=g.torch_device)
     model = _load_classes(model, checkpoint)
-    model = model.to(g.device)
+    model = model.to(g.torch_device)
     model.eval()
     g.model = model
     sly.logger.info("🟩 Model has been successfully deployed")
@@ -95,7 +95,7 @@ def perform_inference_batch(model, images_nps, topn=5):
     inference_results = []
     for images_batch in sly.batched(images_nps, g.batch_size):
         input_tensors = torch.cat([_preprocess_image(img) for img in images_batch], dim=0)
-        data_samples = [DataSample().to(g.device) for _ in range(len(images_batch))]
+        data_samples = [DataSample().to(g.torch_device) for _ in range(len(images_batch))]
         results, is_datasample = _predict_with_model_batch(model, input_tensors, data_samples)
         batch_results = _process_batch_results(results, is_datasample, topn)
         inference_results.extend(batch_results)
@@ -104,7 +104,7 @@ def perform_inference_batch(model, images_nps, topn=5):
 
 def _predict_with_model(model, input_tensor):
     with torch.no_grad():
-        data_samples = [DataSample().to(g.device)]
+        data_samples = [DataSample().to(g.torch_device)]
         results = model(input_tensor, data_samples=data_samples, mode='predict')
         is_datasample = isinstance(results, list) and isinstance(results[0], DataSample)
         return results, is_datasample
@@ -131,7 +131,7 @@ def _preprocess_image(img):
         transforms.Resize((224, 224)),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
     ])
-    return preprocess(image).unsqueeze(0).to(g.device)
+    return preprocess(image).unsqueeze(0).to(g.torch_device)
 
 
 def _process_datasample_results(results, topn=5):
