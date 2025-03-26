@@ -1,3 +1,4 @@
+import cv2
 import os
 import functools
 from functools import lru_cache
@@ -102,7 +103,6 @@ def inference_image_path(image_path, context, state, app_logger):
 
     return res
 
-
 @g.my_app.callback("inference_image_url")
 @sly.timeit
 @send_error_data
@@ -145,21 +145,11 @@ def inference_image_id(api: sly.Api, task_id, context, state, app_logger):
 @send_error_data
 def inference_batch_ids(api: sly.Api, task_id, context, state, app_logger):
     sly.logger.info("inference batch ids called:", extra={"state": state})
-
     # load images
-    images_nps: np.array = f.get_nps_images(images_ids=state["images_ids"])
-    images_to_process: np.array = f.crop_images(images_nps=images_nps,
-                                                rectangles=state.get('rectangles'),
-                                                padding=state.get('pad', 0))
-
-    # inference images
-    images_indexes_to_process = np.asarray([index for index, img_np in enumerate(images_to_process)
-                                            if img_np is not None])
-    inference_results = nn_utils.perform_inference_batch(model=g.model,
-                                                       images_nps=images_to_process[images_indexes_to_process],
-                                                       topn=state.get('topn', 5))
-
-    # return output
+    images_nps = f.get_nps_images(images_ids=state["images_ids"])
+    images_to_process = f.crop_images(images_nps=images_nps, rectangles=state.get('rectangles'), padding=state.get('pad', 0))
+    images_indexes_to_process = [index for index, img_np in enumerate(images_to_process) if img_np is not None]
+    inference_results = nn_utils.perform_inference_batch(model=g.model, images_nps=images_to_process, topn=state.get('topn', 5))
     results = [None for _ in images_nps]
     for index, row in enumerate(inference_results):
         results[images_indexes_to_process[index]] = row
@@ -184,18 +174,21 @@ def _inference_images_ids_async(api: sly.Api, state: Dict, inference_request_uui
         inference_request = g.inference_requests[inference_request_uuid]
         images_ids=state["images_ids"]
         rectangles=state.get('rectangles')
+        use_rectangles = True
+        if rectangles is None:
+            use_rectangles = False
+            rectangles = [None] * len(images_ids)
+        
         padding=state.get('pad', 0)
         topn=state.get('topn', 5)
 
         sly_progress: Progress = inference_request["progress"]
         sly_progress.total = len(images_ids)
-
-        # download images
         download_images_thread = threading.Thread(target=_download_images, args=(images_ids,))
         download_images_thread.start()
 
         result = []
-        for batch_ids in batched(images_ids, batch_size=batch_size):
+        for batch_ids, batch_rects in zip(batched(images_ids, batch_size=batch_size), batched(rectangles, batch_size=batch_size)):
             if inference_request["cancel_inference"]:
                 app_logger.debug(
                     "Cancelling inference project...",
@@ -203,10 +196,14 @@ def _inference_images_ids_async(api: sly.Api, state: Dict, inference_request_uui
                 )
                 result = []
                 break
-            images_nps = np.asarray([g.cache.download_image(api, im_id) for im_id in batch_ids])
-            images_to_process = f.crop_images(images_nps=images_nps, rectangles=rectangles, padding=padding)
-            images_indexes_to_process = np.asarray([index for index, img_np in enumerate(images_to_process) if img_np is not None])
-            inference_results = nn_utils.perform_inference_batch(model=g.model, images_nps=images_to_process[images_indexes_to_process], topn=topn)
+            images_nps = [g.cache.download_image(api, im_id) for im_id in batch_ids]
+            if use_rectangles:
+                images_to_process = f.crop_images(images_nps=images_nps, rectangles=batch_rects, padding=padding)
+            else:
+                images_to_process = f.crop_images(images_nps=images_nps, rectangles=None, padding=padding)
+                
+            images_indexes_to_process = [index for index, img_np in enumerate(images_to_process) if img_np is not None]
+            inference_results = nn_utils.perform_inference_batch(model=g.model, images_nps=images_to_process, topn=topn)
 
             batch_results = [None for _ in images_nps]
             for index, row in enumerate(inference_results):
@@ -249,9 +246,7 @@ def inference_batch_ids_async(api: sly.Api, task_id, context, state, app_logger)
         namespace=uuid.NAMESPACE_URL, name=f"{time.time()}"
     ).hex
     _on_async_inference_start(inference_request_uuid)
-
     threading.Thread(target=_inference_images_ids_async, args=(api, state, inference_request_uuid, app_logger)).start()
-
     g.my_app.send_response(context["request_id"], data={"inference_request_uuid": inference_request_uuid})
 
 
