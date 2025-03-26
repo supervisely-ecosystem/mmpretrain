@@ -60,6 +60,12 @@ change what agent should be used for deploy.
 
 You can use your trained models outside Supervisely platform without any dependencies on Supervisely SDK. You just need to download config files and model weights (.pth) from Team Files, and then you can build and use the model as a normal model in mmcls/mmpretrain.
 
+# Related Apps
+
+- [Train MMClassification V2 (MMPretrain)](https://ecosystem.supervisely.com/apps/mmpretrain/supervisely/train) - app allows to play with different training settings, monitor metrics charts in real time, and save training artifacts to Team Files.  
+- [Apply Classifier to Images Project](https://ecosystem.supervisely.com/apps/apply-classification-model-to-project) - Configure inference settings, model output classes and apply model to your data.
+- [Apply Detection and Classification Models to Images Project](https://ecosystem.supervisely.com/apps/apply-det-and-cls-models-to-project) - Use served classification model along with detection model and apply them to your data.
+
 # For Developers
 
 This python example illustrates available methods of the deployed model. Now you can integrate network predictions to 

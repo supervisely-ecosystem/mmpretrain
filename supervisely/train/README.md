@@ -240,6 +240,12 @@ for advanced user who would like ot export models and use them outside Supervise
 - `open_app.lnk` - link to finished session, you can open finished training dashboard at any time and check all settings and visualizations
    <img src="https://i.imgur.com/BVtNo7E.png"/>
 
+# Related Apps
+
+- [Serve MMClassification V2 (MMPretrain)](https://ecosystem.supervisely.com/apps/mmpretrain/supervisely/serve) - Serve your custom model for inference.  
+- [Apply Classifier to Images Project](https://ecosystem.supervisely.com/apps/apply-classification-model-to-project) - Configure inference settings, model output classes and apply model to your data.
+- [Apply Detection and Classification Models to Images Project](https://ecosystem.supervisely.com/apps/apply-det-and-cls-models-to-project) - Use served classification model along with detection model and apply them to your data.
+
 # How To Use Your Trained Model Outside Supervisely
 
 You can use your trained models outside Supervisely platform without any dependencies on Supervisely SDK. You just need to download config files and model weights (.pth) from Team Files, and then you can build and use the model as a normal model in mmcls/mmpretrain.
