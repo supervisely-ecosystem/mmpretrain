@@ -174,6 +174,11 @@ def _inference_images_ids_async(api: sly.Api, state: Dict, inference_request_uui
         inference_request = g.inference_requests[inference_request_uuid]
         images_ids=state["images_ids"]
         rectangles=state.get('rectangles')
+        use_rectangles = True
+        if rectangles is None:
+            use_rectangles = False
+            rectangles = [None] * len(images_ids)
+        
         padding=state.get('pad', 0)
         topn=state.get('topn', 5)
 
@@ -192,7 +197,11 @@ def _inference_images_ids_async(api: sly.Api, state: Dict, inference_request_uui
                 result = []
                 break
             images_nps = [g.cache.download_image(api, im_id) for im_id in batch_ids]
-            images_to_process = f.crop_images(images_nps=images_nps, rectangles=batch_rects, padding=padding)
+            if use_rectangles:
+                images_to_process = f.crop_images(images_nps=images_nps, rectangles=batch_rects, padding=padding)
+            else:
+                images_to_process = f.crop_images(images_nps=images_nps, rectangles=None, padding=padding)
+                
             images_indexes_to_process = [index for index, img_np in enumerate(images_to_process) if img_np is not None]
             inference_results = nn_utils.perform_inference_batch(model=g.model, images_nps=images_to_process, topn=topn)
 
