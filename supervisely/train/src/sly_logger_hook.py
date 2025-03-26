@@ -105,6 +105,7 @@ class SuperviselyLoggerHook(LoggerHook):
         return fields
 
     def _update_charts(self, log_dict, fields):
+        sly.logger.debug(f"Log dict: {log_dict}")
         if log_dict['mode'] == 'train':
             fields.extend([
                 {"field": "data.chartLR.series[0].data", "payload": [[log_dict["epoch"], round(log_dict["lr"], 6)]], "append": True},
@@ -127,6 +128,7 @@ class SuperviselyLoggerHook(LoggerHook):
                     fields.extend([{"field": "data.chartMemory.series[0].data", "payload": [[log_dict["epoch"], log_dict["memory"]]], "append": True}])
                     
         if log_dict['mode'] == 'val':
+            sly.logger.debug(f"is VAL mode: {log_dict['mode']}")
             fields.extend([
                 {"field": "data.chartValMetrics.series[0].data", "payload": [[log_dict["epoch"], log_dict["precision"]]], "append": True},
                 {"field": "data.chartValMetrics.series[1].data", "payload": [[log_dict["epoch"], log_dict["recall"]]], "append": True},
@@ -146,6 +148,7 @@ class SuperviselyLoggerHook(LoggerHook):
             log_dict.update(mean_val_prediction)
             
         self._update_charts(log_dict, fields)
+        sly.logger.debug(f"Fields: {fields}")
         g.api.app.set_fields(g.task_id, fields)
 
 
