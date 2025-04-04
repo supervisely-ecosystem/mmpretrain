@@ -18,7 +18,7 @@
   },
   "task_location": "application_sessions",
   "poster": "https://github.com/user-attachments/assets/9f799976-8998-433f-afe3-d5d4bef3463f",
-  "icon": "https://github.com/user-attachments/assets/616e9bf9-26f9-4210-9598-f125e4dc02e5",
+  "icon": "https://github.com/supervisely-ecosystem/mmpretrain/releases/download/v1.0.0/icon-serve.png",
   "icon_cover": true,
   "isolate": true,
   "need_gpu": false,

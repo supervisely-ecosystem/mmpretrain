@@ -16,7 +16,7 @@
   "need_gpu": true,
   "gpu": "required",
   "poster": "https://github.com/user-attachments/assets/93780092-db4b-44e2-85b4-96a647178f35",
-  "icon": "https://github.com/user-attachments/assets/865b79cc-a4f8-4bf7-8e94-a469a05b5652",
+  "icon": "https://github.com/supervisely-ecosystem/mmpretrain/releases/download/v1.0.0/icon-train.png",
   "icon_cover": true,
   "integrated_into": [
     "panel"
