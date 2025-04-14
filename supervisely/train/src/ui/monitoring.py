@@ -142,6 +142,7 @@ def create_experiment(model_name, remote_dir):
     experiment_info.train_size = g.train_size
     experiment_info.val_size = g.val_size
     experiment_info_json = asdict(experiment_info)
+    experiment_info_json["project_preview"] = g.project_info.image_preview_url
     experiment_info_path = os.path.join(g.artifacts_dir, "experiment_info.json")
     remote_experiment_info_path = os.path.join(remote_dir, "experiment_info.json")
     dump_json_file(experiment_info_json, experiment_info_path)
