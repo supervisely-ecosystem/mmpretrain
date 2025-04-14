@@ -3,6 +3,7 @@ import os
 import sly_globals as g
 import workflow as w
 from sly_train_progress import init_progress
+from dataclasses import asdict
 from supervisely.io.fs import list_files, list_files_recursively, get_file_name_with_ext
 from supervisely.io.json import dump_json_file
 from supervisely.nn.artifacts.artifacts import TrainInfo
@@ -140,7 +141,7 @@ def create_experiment(model_name, remote_dir):
     experiment_info.experiment_name = f"{g.task_id}_{g.project_info.name}_{model_name}"
     experiment_info.model_name= model_name
     experiment_info.framework_name = f"{g.sly_mmcls.framework_name} V2"
-    experiment_info_json = experiment_info.to_json()
+    experiment_info_json = asdict(experiment_info)
     experiment_info_path = os.path.join(g.artifacts_dir, "experiment_info.json")
     remote_experiment_info_path = os.path.join(remote_dir, "experiment_info.json")
     dump_json_file(experiment_info_json, experiment_info_path)
