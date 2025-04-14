@@ -143,11 +143,13 @@ def create_experiment(model_name, remote_dir):
     experiment_info.val_size = g.val_size
     experiment_info_json = asdict(experiment_info)
     experiment_info_json["project_preview"] = g.project_info.image_preview_url
+    g.api.task.set_output_experiment(g.task_id, experiment_info_json)
+    experiment_info_json.pop("project_preview")
+    
     experiment_info_path = os.path.join(g.artifacts_dir, "experiment_info.json")
     remote_experiment_info_path = os.path.join(remote_dir, "experiment_info.json")
     dump_json_file(experiment_info_json, experiment_info_path)
     g.api.file.upload(g.team_id, experiment_info_path, remote_experiment_info_path)
-    g.api.task.set_output_experiment(g.task_id, experiment_info_json)
     
 
 @g.my_app.callback("train")
