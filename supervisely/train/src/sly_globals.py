@@ -65,3 +65,6 @@ sly_mmdet_generated_metadata = None  # for project Workflow purposes
 cls_mode = "one_label"
 devices = func.get_gpu_devices()
 local_weights_path = None
+
+train_size = None
+val_size = None
