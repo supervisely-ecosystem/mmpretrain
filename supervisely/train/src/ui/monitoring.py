@@ -5,7 +5,7 @@ import workflow as w
 from sly_train_progress import init_progress
 from supervisely.io.fs import list_files, list_files_recursively, get_file_name_with_ext
 from supervisely.io.json import dump_json_file
-from sly.nn.artifacts import TrainInfo
+from supervisely.nn.artifacts import TrainInfo
 
 import supervisely as sly
 from tools.train import main as mm_train
