@@ -172,7 +172,12 @@ def train(api: sly.Api, task_id, context, state, app_logger):
         g.api.app.set_fields(g.task_id, fields)
 
         remote_dir = upload_artifacts_and_log_progress()
-        create_experiment(state["selectedModel"], remote_dir)
+        
+        try:
+            create_experiment(state["selectedModel"], remote_dir)
+        except Exception as e:
+            sly.logger.warning(f"Couldn't create experiment, this training session will not appear in experiments table. Error: {e}")
+        
         file_info = api.file.get_info_by_path(g.team_id, os.path.join(remote_dir, _open_lnk_name))
         api.task.set_output_directory(task_id, file_info.id, remote_dir)
 
