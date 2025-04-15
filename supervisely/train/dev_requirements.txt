@@ -1,7 +1,7 @@
 # git+https://github.com/supervisely/supervisely.git@some-test-branch
 
 # See Dockerfile for exact versions
-supervisely==6.73.332
+supervisely==6.73.347
 
 # AUGS
 imgaug
