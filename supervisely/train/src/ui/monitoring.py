@@ -174,6 +174,7 @@ def train(api: sly.Api, task_id, context, state, app_logger):
         remote_dir = upload_artifacts_and_log_progress()
         
         try:
+            sly.logger.info("Creating experiment info")
             create_experiment(state["selectedModel"], remote_dir)
         except Exception as e:
             sly.logger.warning(f"Couldn't create experiment, this training session will not appear in experiments table. Error: {e}")
