@@ -15,6 +15,20 @@
 			"args": []
 		},
 		{
+			"name": "RD: Train MMClassification V2",
+			"type": "python",
+			"request": "launch",
+			"program": "${workspaceFolder}/supervisely/train/src/sly_train.py",
+			"console": "integratedTerminal",
+			"justMyCode": false,
+			"env": {
+				"PYTHONPATH": "${workspaceFolder}",
+				"LOG_LEVEL": "DEBUG",
+				"AGENT_TOKEN": "l0oOpsk5B5BYn7PtEUtyAk3aoCB8cdE6"
+			},
+			"args": []
+		},
+		{
 			"name": "Serve MMClassification V2",
 			"type": "debugpy",
 			"request": "launch",
