@@ -75,16 +75,16 @@ def deploy_model():
 
 
 def perform_inference(img, topn=5):
-    pred = g.inferencer(img)
+    pred = g.inferencer(img)[0]
     scores = pred["pred_scores"]
     results = []
     top_indices = scores.argsort()[-topn:][::-1]
     for idx in top_indices:
         class_name = g.gt_index_to_labels.get(idx, None)
         results.append({
-            "label": int(idx),
-            "score": float(scores[idx]),
-            "class": class_name
+            "label": [int(idx)],
+            "score": [float(scores[idx])],
+            "class": [class_name]
         })
     return results
 
