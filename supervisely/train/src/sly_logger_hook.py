@@ -174,7 +174,7 @@ class SuperviselyLoggerHook(LoggerHook):
         log_dict['mode'] = mode
                 
         fields = self._update_progress(log_dict, runner)
-        # Для валидационных данных используем метрики, уже посчитанные MMEngine
+        # Use MMEngine metrics for validation data
         if mode == 'val' and hasattr(runner, "val_evaluator") and hasattr(runner.val_evaluator, "metrics"):
             for k, v in runner.val_evaluator.metrics.items():
                 base_key = k.split('/')[-1]
