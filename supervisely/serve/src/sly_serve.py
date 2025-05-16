@@ -1,4 +1,3 @@
-import cv2
 import os
 import functools
 from functools import lru_cache
@@ -8,7 +7,6 @@ from concurrent.futures import ThreadPoolExecutor
 import threading
 import uuid
 
-import numpy as np
 import supervisely as sly
 from supervisely import batched
 from supervisely.task.progress import Progress
@@ -97,7 +95,7 @@ def inference_image_path(image_path, context, state, app_logger):
         res_path = os.path.join(g.my_app.data_dir, sly.rand_str(10) + sly.fs.get_file_ext(image_path))
         sly.image.write(res_path, cropped_image)
 
-    res = nn_utils.perform_inference(g.model, res_path, topn=state.get("topn", 5))
+    res = nn_utils.perform_inference(res_path, topn=state.get("topn", 5))
     if "rectangle" in state:
         sly.fs.silent_remove(res_path)
 
@@ -145,12 +143,14 @@ def inference_image_id(api: sly.Api, task_id, context, state, app_logger):
 @send_error_data
 def inference_batch_ids(api: sly.Api, task_id, context, state, app_logger):
     sly.logger.info("inference batch ids called:", extra={"state": state})
+
     # load images
     images_nps = f.get_nps_images(images_ids=state["images_ids"])
     images_to_process = f.crop_images(images_nps=images_nps, rectangles=state.get('rectangles'), padding=state.get('pad', 0))
     images_indexes_to_process = [index for index, img_np in enumerate(images_to_process) if img_np is not None]
-    inference_results = nn_utils.perform_inference_batch(model=g.model, images_nps=images_to_process, topn=state.get('topn', 5))
+    inference_results = nn_utils.perform_inference_batch(images_to_process, topn=state.get('topn', 5))
     results = [None for _ in images_nps]
+
     for index, row in enumerate(inference_results):
         results[images_indexes_to_process[index]] = row
 
@@ -203,7 +203,7 @@ def _inference_images_ids_async(api: sly.Api, state: Dict, inference_request_uui
                 images_to_process = f.crop_images(images_nps=images_nps, rectangles=None, padding=padding)
                 
             images_indexes_to_process = [index for index, img_np in enumerate(images_to_process) if img_np is not None]
-            inference_results = nn_utils.perform_inference_batch(model=g.model, images_nps=images_to_process, topn=topn)
+            inference_results = nn_utils.perform_inference_batch(images_to_process, topn=topn)
 
             batch_results = [None for _ in images_nps]
             for index, row in enumerate(inference_results):
@@ -369,29 +369,8 @@ def get_inference_progress(api: sly.Api, task_id, context, state, app_logger):
         extra=log_extra,
     )
 
-    # Ger rid of `pending_results` to less response size
     inference_request["pending_results"] = []
     g.my_app.send_response(context["request_id"], data=inference_request)
-
-# def debug_inference1():
-#     image_id = 927270
-#     image_path = f"./data/images/{image_id}.jpg"
-#     if not sly.fs.file_exists(image_path):
-#         g.my_app.public_api.image.download_path(image_id, image_path)
-#     res = nn_utils.perform_inference(g.model, image_path, topn=5)
-# #
-# #
-# def debug_inference2():
-#     image_id = 927270
-#     img_np = cv2.cvtColor(g.my_app.public_api.image.download_np(image_id), cv2.COLOR_BGR2RGB)
-#     res = nn_utils.perform_inference(g.model, img_np, topn=5)
-# #
-# #
-# def debug_inference3():
-#     image_id = 927270
-#     img_np = cv2.cvtColor(g.my_app.public_api.image.download_np(image_id), cv2.COLOR_BGR2RGB)
-#     res = nn_utils.perform_inference_batch(g.model, [img_np, img_np, img_np], topn=5)
-#
 
 def main():
     sly.logger.info("Script arguments", extra={
@@ -405,14 +384,9 @@ def main():
     nn_utils.construct_model_meta()
     nn_utils.deploy_model()
     w.workflow_input(g.api, g.remote_weights_path)
-    # debug_inference1()
-    # debug_inference2()
-    # debug_inference3()
 
     sly.logger.info("nps will be converted to RGB")
     g.my_app.run()
 
-
-# @TODO: readme + gif - how to replace tag2urls file + release another app
 if __name__ == "__main__":
     sly.main_wrapper("main", main)

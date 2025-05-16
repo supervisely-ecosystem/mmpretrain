@@ -28,6 +28,7 @@ if sly.is_development():
     sly_env_path = os.path.join(root_source_path, "supervisely", "serve", "supervisely.env")
     load_dotenv(sly_env_path)
 
+
 # if sly.is_development():
 #     load_dotenv("local.env")
 #     load_dotenv(os.path.expanduser("~/supervisely.env"))
@@ -63,7 +64,7 @@ local_gt_labels_path = os.path.join(local_info_dir, "gt_labels.json")
 local_labels_urls_path = os.path.join(local_info_dir, "tag2urls.json")
 
 
-model = None
+inferencer = None
 cfg = None
 
 meta: sly.ProjectMeta = None
