@@ -338,7 +338,7 @@ def generate_runtime_config(state):
     )
 
     py_config = re.sub(
-        r"load_from\s*=\s*['\"]?(None|[\w\/\.]*)['\"]?",
+        r"load_from\s*=\s*['\"]?(None|[\w\/:\.\-]*)['\"]?",
         lambda m: _replace_function("load_from", g.local_weights_path, "{} = '{}'", m),
         py_config,
         flags=re.MULTILINE,

@@ -74,31 +74,54 @@ def deploy_model():
     sly.logger.info("🟩 Model has been successfully deployed")
 
 
-def perform_inference(img, topn=5):
-    pred = g.inferencer(img)[0]
-    scores = pred["pred_scores"]
-    results = []
-    top_indices = scores.argsort()[-topn:][::-1]
-    for idx in top_indices:
-        class_name = g.gt_index_to_labels.get(idx, None)
-        results.append({
-            "label": [int(idx)],
-            "score": [float(scores[idx])],
-            "class": [class_name]
-        })
-    return results
+def perform_inference(img, topn: int = 5):
+    import numpy as np
 
-def perform_inference_batch(images_nps, topn=5):
+    pred = g.inferencer(img)[0]
+    scores: np.ndarray = pred["pred_scores"]
+
+    if topn == 1:
+        top_indices = [int(scores.argmax())]
+    else:
+        k = min(topn, scores.shape[0])
+        top_indices = np.argpartition(scores, -k)[-k:]
+        top_indices = top_indices[np.argsort(scores[top_indices])[::-1]]
+
+    labels = [int(i) for i in top_indices]
+    scores_list = [float(scores[i]) for i in top_indices]
+    classes = [g.gt_index_to_labels.get(i, None) for i in top_indices]
+
+    return [{
+        "label": labels,
+        "score": scores_list,
+        "class": classes,
+    }]
+
+def perform_inference_batch(images_nps, topn: int = 5):
+    import numpy as np
+
     predictions = g.inferencer(images_nps, batch_size=g.batch_size)
+    idx2label = g.gt_index_to_labels
+
     results = []
     for sample in predictions:
-        scores = sample["pred_scores"]
-        top_indices = scores.argsort()[-topn:][::-1]
-        for idx in top_indices:
-            class_name = g.gt_index_to_labels.get(idx, None)
-            results.append({
-                "label": [int(idx)],
-                "score": [float(scores[idx])],
-                "class": [class_name]
-            })
+        scores: np.ndarray = sample["pred_scores"]
+
+        if topn == 1:
+            top_indices = [int(scores.argmax())]
+        else:
+            k = min(topn, scores.shape[0])
+            top_indices = np.argpartition(scores, -k)[-k:]
+            top_indices = top_indices[np.argsort(scores[top_indices])[::-1]]
+
+        labels = [int(i) for i in top_indices]
+        scores_list = [float(scores[i]) for i in top_indices]
+        classes = [idx2label.get(i, None) for i in top_indices]
+
+        results.append({
+            "label": labels,
+            "score": scores_list,
+            "class": classes,
+        })
+
     return results
