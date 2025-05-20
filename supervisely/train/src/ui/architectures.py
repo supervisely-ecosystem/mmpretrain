@@ -669,6 +669,9 @@ def restart(data, state):
 @g.my_app.ignore_errors_and_show_dialog_window()
 def download_weights(api: sly.Api, task_id, context, state, app_logger):
     global local_weights_path
+
+    sly.logger.info(f"Starting weights downloading...")
+    
     try:
         if state["weightsInitialization"] == "custom":
             weights_path_remote = state["weightsPath"]
@@ -705,6 +708,7 @@ def download_weights(api: sly.Api, task_id, context, state, app_logger):
                 reset_progress(6)
         else:
             weights_url = get_pretrained_weights_by_name(state["selectedModel"])
+            sly.logger.info(f"Downloading weights from {url}...")
             local_weights_path = os.path.join(
                 g.my_app.data_dir, sly.fs.get_file_name_with_ext(weights_url)
             )
