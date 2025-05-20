@@ -205,9 +205,9 @@ test_dataloader = dict(
     sly.logger.info(f"Number of tags: {num_tags}, using topk={eval_topk}")
     
     if state["cls_mode"] == "multi_label":
-        evaluator = f"dict(type='MultiLabelMetric')"
+        evaluator = f"dict(type='MultiLabelMetric', average='macro')"
     else:
-        evaluator = f"dict(type='SingleLabelMetric')"
+        evaluator = f"dict(type='SingleLabelMetric', average='macro')"
 
     data_preprocessor = f"""
 data_preprocessor = dict(
@@ -338,7 +338,7 @@ def generate_runtime_config(state):
     )
 
     py_config = re.sub(
-        r"load_from\s*=\s*['\"]?(None|[\w\/\.]*)['\"]?",
+        r"load_from\s*=\s*['\"]?(None|[\w\/:\.\-]*)['\"]?",
         lambda m: _replace_function("load_from", g.local_weights_path, "{} = '{}'", m),
         py_config,
         flags=re.MULTILINE,

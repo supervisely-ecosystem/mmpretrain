@@ -47,6 +47,9 @@ class SuperviselyLoggerHook(LoggerHook):
         
         fields = [
             {"field": "state.isValidation", "payload": False},
+            {"field": "data.chartValMetrics.series[0].data", "payload": []},
+            {"field": "data.chartValMetrics.series[1].data", "payload": []},
+            {"field": "data.chartValMetrics.series[2].data", "payload": []},
         ]
         add_progress_to_request(fields, "Epoch", self.progress_epoch)
         add_progress_to_request(fields, "Iter", self.progress_iter)
@@ -75,14 +78,42 @@ class SuperviselyLoggerHook(LoggerHook):
     def after_train_iter(self, runner, batch_idx: int, data_batch=None, outputs=None) -> None:
         super(SuperviselyLoggerHook, self).after_train_iter(runner, batch_idx, data_batch, outputs)
         if self.every_n_inner_iters(batch_idx, self.interval):
-            log_dict = runner.log_processor.get_log_after_iter(runner, batch_idx, 'train')
+            log_dict, log_str = runner.log_processor.get_log_after_iter(runner, batch_idx, 'train')
             self._log_info(log_dict, runner, batch_idx, "train")
 
     def after_val_iter(self, runner, batch_idx: int, data_batch=None, outputs=None) -> None:
         super(SuperviselyLoggerHook, self).after_val_iter(runner, batch_idx, data_batch, outputs)
         if self.every_n_inner_iters(batch_idx, self.interval):
-            log_dict = runner.log_processor.get_log_after_iter(runner, batch_idx, 'val')
-            self._log_info(log_dict, runner, batch_idx, "val")
+            log_dict, log_str = runner.log_processor.get_log_after_iter(runner, batch_idx, 'val')
+            log_dict['mode'] = 'val'
+            fields = self._update_progress(log_dict, runner)
+            g.api.app.set_fields(g.task_id, fields)
+
+    def after_val_epoch(self, runner, metrics: Optional[dict] = None) -> None:
+        super(SuperviselyLoggerHook, self).after_val_epoch(runner, metrics)
+        # Use only MMEngine metrics. No additional calculations.
+        if metrics is None:
+            sly.logger.warning("MMEngine did not return metrics for the validation epoch – skip metric logging.")
+            metrics = {}
+
+        # Clean metric names by removing the prefix `single-label/` or `multi-label/`
+        cleaned_metrics = {}
+        for k, v in metrics.items():
+            base_key = k.split('/')[-1]  # precision -> precision, single-label/precision -> precision
+            cleaned_metrics[base_key] = v
+
+        metrics = cleaned_metrics
+
+        log_dict = {
+            'epoch': runner.epoch,
+            'mode': 'val',
+            **metrics
+        }
+
+        fields = self._update_progress(log_dict, runner)
+        self._update_charts(log_dict, fields)
+        sly.logger.debug(f"Fields (val epoch): {fields}")
+        g.api.app.set_fields(g.task_id, fields)
 
     def _update_progress(self, log_dict, runner):
         fields = []
@@ -143,22 +174,12 @@ class SuperviselyLoggerHook(LoggerHook):
         log_dict['mode'] = mode
                 
         fields = self._update_progress(log_dict, runner)
-        if mode == 'val':
-            mean_val_prediction = self._cal_val_metrics(runner.val_evaluator.metrics)
-            log_dict.update(mean_val_prediction)
+        # Use MMEngine metrics for validation data
+        if mode == 'val' and hasattr(runner, "val_evaluator") and hasattr(runner.val_evaluator, "metrics"):
+            for k, v in runner.val_evaluator.metrics.items():
+                base_key = k.split('/')[-1]
+                log_dict[base_key] = v
             
         self._update_charts(log_dict, fields)
         sly.logger.debug(f"Fields: {fields}")
         g.api.app.set_fields(g.task_id, fields)
-
-
-    def _cal_val_metrics(self, metrics):
-        results = []
-        for batch in metrics:
-            batch_res = batch.compute_metrics(batch.results)
-            results.append(batch_res)
-            
-        res_dict = {}
-        for key in ["precision", "recall", "f1-score"]: # SingleLabelMetrics/MultiLabelMetrics
-            res_dict[key] = sum([res[key] for res in results]) / len(results)
-        return res_dict
