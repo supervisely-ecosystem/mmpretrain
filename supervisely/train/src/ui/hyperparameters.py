@@ -50,6 +50,12 @@ def restart(data, state):
 @sly.timeit
 @g.my_app.ignore_errors_and_show_dialog_window()
 def use_hyp(api: sly.Api, task_id, context, state, app_logger):
+    from torch import cuda
+
+    gpu_id = state["gpusId"]
+    device_str = "cuda:" + gpu_id
+    cuda.set_device(device_str)
+    app_logger.info(f"GPU device set ({device_str})", extra={"gpu_id": gpu_id})
     metric_period = state["metricsPeriod"]
     if state["batchSizePerGPU"] * state["metricsPeriod"] > state["final_train_size"]:
         metric_period = 1
