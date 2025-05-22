@@ -671,7 +671,6 @@ def download_weights(api: sly.Api, task_id, context, state, app_logger):
     global local_weights_path
 
     sly.logger.info(f"Starting weights downloading...")
-    
     try:
         if state["weightsInitialization"] == "custom":
             weights_path_remote = state["weightsPath"]
@@ -694,6 +693,7 @@ def download_weights(api: sly.Api, task_id, context, state, app_logger):
                 g.my_app.data_dir, sly.fs.get_file_name_with_ext(weights_path_remote)
             )
             if sly.fs.file_exists(local_weights_path) is False:
+                sly.logger.debug(f"Downloading weights from {weights_path_remote} to {local_weights_path}")
                 file_info = g.api.file.get_info_by_path(g.team_id, weights_path_remote)
                 if file_info is None:
                     raise FileNotFoundError(
@@ -706,13 +706,16 @@ def download_weights(api: sly.Api, task_id, context, state, app_logger):
                     g.team_id, weights_path_remote, local_weights_path, g.my_app.cache, progress_cb
                 )
                 reset_progress(6)
+                sly.logger.debug(f"Weights downloaded to {local_weights_path}")
+            else:
+                sly.logger.debug(f"Weights already exists at {local_weights_path}")
         else:
             weights_url = get_pretrained_weights_by_name(state["selectedModel"])
-            sly.logger.info(f"Downloading weights from {weights_url}...")
             local_weights_path = os.path.join(
                 g.my_app.data_dir, sly.fs.get_file_name_with_ext(weights_url)
             )
             if sly.fs.file_exists(local_weights_path) is False:
+                sly.logger.debug(f"Downloading weights from {weights_url} to {local_weights_path}")
                 response = requests.head(weights_url, allow_redirects=True)
                 sizeb = int(response.headers.get("content-length", 0))
                 progress_cb = get_progress_cb(
@@ -720,12 +723,21 @@ def download_weights(api: sly.Api, task_id, context, state, app_logger):
                 )
                 sly.fs.download(weights_url, local_weights_path, g.my_app.cache, progress_cb)
                 reset_progress(6)
+                sly.logger.debug(f"Weights downloaded to {local_weights_path}")
+            else:
+                sly.logger.debug(f"Weights already exists at {local_weights_path}")
+
+        if sly.fs.file_exists(local_weights_path) is False:
+            error_msg = f"Weights file not found at: {local_weights_path} after download"
+            raise FileNotFoundError(error_msg)
+
         sly.logger.info(
             "Pretrained weights has been successfully downloaded",
             extra={"weights": local_weights_path},
         )
     except Exception as e:
         reset_progress(6)
+        sly.logger.error(f"Failed to download weights: {str(e)}")
         raise e
 
     g.local_weights_path = local_weights_path
