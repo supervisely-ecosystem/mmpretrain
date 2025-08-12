@@ -141,6 +141,7 @@ def create_experiment(model_name, remote_dir):
     experiment_info.framework_name = f"{g.sly_mmcls.framework_name} V2"
     experiment_info.train_size = g.train_size
     experiment_info.val_size = g.val_size
+    experiment_info.experiment_report_id = None
     experiment_info_json = asdict(experiment_info)
     experiment_info_json["project_preview"] = g.project_info.image_preview_url
     g.api.task.set_output_experiment(g.task_id, experiment_info_json)
