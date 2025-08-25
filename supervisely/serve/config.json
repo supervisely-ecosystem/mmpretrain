@@ -8,8 +8,8 @@
     "serve"
   ],
   "description": "Deploy model as REST API service",
-  "docker_image": "supervisely/mmpretrain:1.0.1",
-  "instance_version": "6.12.44",
+  "docker_image": "supervisely/mmpretrain:1.0.2",
+  "instance_version": "6.15.0",
   "main_script": "supervisely/serve/src/sly_serve.py",
   "modal_template": "supervisely/serve/src/modal.html",
   "modal_template_state": {
