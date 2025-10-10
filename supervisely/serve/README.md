@@ -10,7 +10,7 @@
   <a href="#For-Developers">For Developers</a>
 </p>
 
-[![](https://img.shields.io/badge/supervisely-ecosystem-brightgreen)](../../../../supervisely-ecosystem/mmpretrain/supervisely/serve)
+[![](https://img.shields.io/badge/supervisely-ecosystem-brightgreen)](../../../../../../supervisely-ecosystem/mmpretrain/supervisely/serve)
 [![](https://img.shields.io/badge/slack-chat-green.svg?logo=slack)](https://supervisely.com/slack)
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/supervisely-ecosystem/mmpretrain)
 [![views](https://app.supervisely.com/img/badges/views/supervisely-ecosystem/mmpretrain/supervisely/serve.png)](https://supervisely.com)
@@ -62,7 +62,7 @@ You can use your trained models outside Supervisely platform without any depende
 
 # Related Apps
 
-- [Train MMClassification V2 (MMPretrain)](../../../../supervisely-ecosystem/mmpretrain/supervisely/train) - app allows to play with different training settings, monitor metrics charts in real time, and save training artifacts to Team Files.  
+- [Train MMClassification V2 (MMPretrain)](../../../../../../supervisely-ecosystem/mmpretrain/supervisely/train) - app allows to play with different training settings, monitor metrics charts in real time, and save training artifacts to Team Files.  
 - [Apply Classifier to Images Project](../../../../supervisely-ecosystem/apply-classification-model-to-project) - Configure inference settings, model output classes and apply model to your data.
 - [Apply Detection and Classification Models to Images Project](../../../../supervisely-ecosystem/apply-det-and-cls-models-to-project) - Use served classification model along with detection model and apply them to your data.
 
