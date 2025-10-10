@@ -12,7 +12,7 @@
   <a href="#How-To-Use-Your-Trained-Model-Outside-Supervisely">How To Use Your Trained Model Outside Supervisely</a> •
 </p>
 
-[![](https://img.shields.io/badge/supervisely-ecosystem-brightgreen)](../../../../supervisely-ecosystem/mmpretrain/supervisely/train)
+[![](https://img.shields.io/badge/supervisely-ecosystem-brightgreen)](../../../../../../supervisely-ecosystem/mmpretrain/supervisely/train)
 [![](https://img.shields.io/badge/slack-chat-green.svg?logo=slack)](https://supervisely.com/slack)
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/supervisely-ecosystem/mmpretrain)
 [![views](https://app.supervisely.com/img/badges/views/supervisely-ecosystem/mmpretrain/supervisely/train.png)](https://supervisely.com)
@@ -88,7 +88,7 @@ Train models from [MMPretrain](https://github.com/open-mmlab/mmpretrain) (update
 | MViT Large            | 217.99     | 43.87     | 85.25 | 97.14 | [config](https://github.com/open-mmlab/mmpretrain/blob/main/configs/mvit/mvitv2-large_8xb256_in1k.py) \| [model](https://download.openmmlab.com/mmclassification/v0/mvit/mvitv2-large_3rdparty_in1k_20220722-2b57b983.pth)                                                       |
 
 
-Watch [how-to video](https://youtu.be/R9sbH3biCmQ) about similar [Train MMClassification](../../../../supervisely-ecosystem/mmclassification/supervisely/train) app for details:
+Watch [how-to video](https://youtu.be/R9sbH3biCmQ) about similar [Train MMClassification](../../../../../../supervisely-ecosystem/mmclassification/supervisely/train) app for details:
 
 <a data-key="sly-embeded-video-link" href="https://youtu.be/R9sbH3biCmQ" data-video-code="R9sbH3biCmQ">
     <img src="https://i.imgur.com/O47n1S1.png" alt="SLY_EMBEDED_VIDEO_LINK"  style="max-width:100%;">
@@ -242,7 +242,7 @@ for advanced user who would like ot export models and use them outside Supervise
 
 # Related Apps
 
-- [Serve MMClassification V2 (MMPretrain)](../../../../supervisely-ecosystem/mmpretrain/supervisely/serve) - Serve your custom model for inference.  
+- [Serve MMClassification V2 (MMPretrain)](../../../../../../supervisely-ecosystem/mmpretrain/supervisely/serve) - Serve your custom model for inference.  
 - [Apply Classifier to Images Project](../../../../supervisely-ecosystem/apply-classification-model-to-project) - Configure inference settings, model output classes and apply model to your data.
 - [Apply Detection and Classification Models to Images Project](../../../../supervisely-ecosystem/apply-det-and-cls-models-to-project) - Use served classification model along with detection model and apply them to your data.
 
