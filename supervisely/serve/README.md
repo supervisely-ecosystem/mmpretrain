@@ -22,7 +22,7 @@
 
 App deploys MMPretrain model trained in Supervisely as REST API service. Serve app is the simplest way how any model can be integrated into Supervisely. Once model is deployed, user gets the following benefits:
 
-1. Use out of the box apps for inference - [AI assisted classification and tagging](../../../../supervisely-ecosystem/ai-assisted-classification)
+1. Use out of the box apps for inference - [AI assisted classification and tagging](https://ecosystem.supervisely.com/apps/ai-assisted-classification)
 2. Apps from Supervisely Ecosystem can use NN predictions: for visualization, for analysis, performance evaluation, etc ...
 3. Communicate with NN in custom python script (see section <a href="#For-developers">for developers</a>)
 4. App illustrates how to use NN weights. For example: you can train model in Supervisely, download its weights and use them the way you want outside Supervisely.
@@ -63,8 +63,8 @@ You can use your trained models outside Supervisely platform without any depende
 # Related Apps
 
 - [Train MMClassification V2 (MMPretrain)](https://ecosystem.supervisely.com/apps/mmpretrain/supervisely/train) - app allows to play with different training settings, monitor metrics charts in real time, and save training artifacts to Team Files.  
-- [Apply Classifier to Images Project](../../../../supervisely-ecosystem/apply-classification-model-to-project) - Configure inference settings, model output classes and apply model to your data.
-- [Apply Detection and Classification Models to Images Project](../../../../supervisely-ecosystem/apply-det-and-cls-models-to-project) - Use served classification model along with detection model and apply them to your data.
+- [Apply Classifier to Images Project](https://ecosystem.supervisely.com/apps/apply-classification-model-to-project) - Configure inference settings, model output classes and apply model to your data.
+- [Apply Detection and Classification Models to Images Project](https://ecosystem.supervisely.com/apps/apply-det-and-cls-models-to-project) - Use served classification model along with detection model and apply them to your data.
 
 # For Developers
 
