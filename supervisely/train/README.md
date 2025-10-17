@@ -123,7 +123,7 @@ Watch [how-to video](https://youtu.be/R9sbH3biCmQ) about similar [Train MMClassi
    - use one of the predefined pipelines
    <img src="https://i.imgur.com/tJpY1uc.png"/>
    - or use custom augs.  To create custom augmentation pipeline use app
-   "[ImgAug Studio](../../../../supervisely-ecosystem/imgaug-studio)" from Supervisely Ecosystem. This app allows to export pipeline in several formats. To use custom augs just provide the path to JSON config in team files.
+   "[ImgAug Studio](https://ecosystem.supervisely.com/apps/imgaug-studio)" from Supervisely Ecosystem. This app allows to export pipeline in several formats. To use custom augs just provide the path to JSON config in team files.
      <a data-key="sly-embeded-video-link" href="https://youtu.be/ZkZ7krcKq1c" data-video-code="ZkZ7krcKq1c">
          <img src="https://i.imgur.com/HFEhrdl.png" alt="SLY_EMBEDED_VIDEO_LINK"  style="max-width:100%;">
      </a>
@@ -243,8 +243,8 @@ for advanced user who would like ot export models and use them outside Supervise
 # Related Apps
 
 - [Serve MMClassification V2 (MMPretrain)](https://ecosystem.supervisely.com/apps/mmpretrain/supervisely/serve) - Serve your custom model for inference.  
-- [Apply Classifier to Images Project](../../../../supervisely-ecosystem/apply-classification-model-to-project) - Configure inference settings, model output classes and apply model to your data.
-- [Apply Detection and Classification Models to Images Project](../../../../supervisely-ecosystem/apply-det-and-cls-models-to-project) - Use served classification model along with detection model and apply them to your data.
+- [Apply Classifier to Images Project](https://ecosystem.supervisely.com/apps/apply-classification-model-to-project) - Configure inference settings, model output classes and apply model to your data.
+- [Apply Detection and Classification Models to Images Project](https://ecosystem.supervisely.com/apps/apply-det-and-cls-models-to-project) - Use served classification model along with detection model and apply them to your data.
 
 # How To Use Your Trained Model Outside Supervisely
 
