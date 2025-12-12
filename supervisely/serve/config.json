@@ -1,39 +1,39 @@
 {
-  "name": "Serve MMClassification V2 (MMPretrain)",
-  "type": "app",
-  "categories": [
-    "neural network",
-    "images",
-    "classification",
-    "serve"
-  ],
-  "description": "Deploy model as REST API service",
-  "docker_image": "supervisely/mmpretrain:1.0.2",
-  "instance_version": "6.15.0",
-  "main_script": "supervisely/serve/src/sly_serve.py",
-  "modal_template": "supervisely/serve/src/modal.html",
-  "modal_template_state": {
-    "device": "cuda:0",
-    "batch_size": 256
-  },
-  "task_location": "application_sessions",
-  "poster": "https://github.com/user-attachments/assets/9f799976-8998-433f-afe3-d5d4bef3463f",
-  "icon": "https://github.com/supervisely-ecosystem/mmpretrain/releases/download/v1.0.0/icon-serve.png",
-  "icon_cover": true,
-  "isolate": true,
-  "need_gpu": false,
-  "gpu": "preferred",
-  "headless": true,
-  "session_tags": [
-    "deployed_nn_cls"
-  ],
-  "context_menu": {
-    "target": [
-      "files_file"
-    ]
-  },
-  "community_agent": false,
-  "license": {
-    "type": "Apache-2.0"
-  }
+    "name": "Serve MMClassification V2 (MMPretrain)",
+    "type": "app",
+    "categories": [
+        "neural network",
+        "images",
+        "classification",
+        "serve"
+    ],
+    "description": "Deploy model as REST API service",
+    "docker_image": "supervisely/mmpretrain:1.0.3",
+    "instance_version": "6.15.35",
+    "main_script": "supervisely/serve/src/sly_serve.py",
+    "modal_template": "supervisely/serve/src/modal.html",
+    "modal_template_state": {
+        "device": "cuda:0",
+        "batch_size": 256
+    },
+    "task_location": "application_sessions",
+    "poster": "https://github.com/user-attachments/assets/9f799976-8998-433f-afe3-d5d4bef3463f",
+    "icon": "https://github.com/supervisely-ecosystem/mmpretrain/releases/download/v1.0.0/icon-serve.png",
+    "icon_cover": true,
+    "isolate": true,
+    "need_gpu": false,
+    "gpu": "preferred",
+    "headless": true,
+    "session_tags": [
+        "deployed_nn_cls"
+    ],
+    "context_menu": {
+        "target": [
+            "files_file"
+        ]
+    },
+    "community_agent": false,
+    "license": {
+        "type": "Apache-2.0"
+    }
 }
