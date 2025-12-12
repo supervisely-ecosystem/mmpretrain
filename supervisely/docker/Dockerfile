@@ -26,4 +26,6 @@ RUN pip install importlib-metadata==8.5.0 && \
     pip install einops==0.8.1 && \
     pip install rich==13.4.2
 
-RUN pip install supervisely==6.73.424
+RUN pip install supervisely==6.73.485
+
+LABEL python_sdk_version="6.73.485"
