@@ -1,35 +1,35 @@
 {
-  "name": "Train MMClassification V2 (MMPretrain)",
-  "type": "app",
-  "categories": [
-    "neural network",
-    "images",
-    "classification",
-    "train"
-  ],
-  "description": "Dashboard to configure, start and monitor training",
-  "docker_image": "supervisely/mmpretrain:1.0.2",
-  "instance_version": "6.15.0",
-  "main_script": "supervisely/train/src/sly_train.py",
-  "gui_template": "supervisely/train/src/gui.html",
-  "task_location": "workspace_tasks",
-  "need_gpu": true,
-  "gpu": "required",
-  "poster": "https://github.com/user-attachments/assets/93780092-db4b-44e2-85b4-96a647178f35",
-  "icon": "https://github.com/supervisely-ecosystem/mmpretrain/releases/download/v1.0.0/icon-train.png",
-  "icon_cover": true,
-  "integrated_into": [
-    "panel"
-  ],
-  "context_menu": {
-    "target": [
-      "images_project"
+    "name": "Train MMClassification V2 (MMPretrain)",
+    "type": "app",
+    "categories": [
+        "neural network",
+        "images",
+        "classification",
+        "train"
     ],
-    "context_root": "Neural Networks",
-    "context_category": "MM Classification"
-  },
-  "community_agent": false,
-  "license": {
-    "type": "Apache-2.0"
-  }
+    "description": "Dashboard to configure, start and monitor training",
+    "docker_image": "supervisely/mmpretrain:1.0.3",
+    "instance_version": "6.15.35",
+    "main_script": "supervisely/train/src/sly_train.py",
+    "gui_template": "supervisely/train/src/gui.html",
+    "task_location": "workspace_tasks",
+    "need_gpu": true,
+    "gpu": "required",
+    "poster": "https://github.com/user-attachments/assets/93780092-db4b-44e2-85b4-96a647178f35",
+    "icon": "https://github.com/supervisely-ecosystem/mmpretrain/releases/download/v1.0.0/icon-train.png",
+    "icon_cover": true,
+    "integrated_into": [
+        "panel"
+    ],
+    "context_menu": {
+        "target": [
+            "images_project"
+        ],
+        "context_root": "Neural Networks",
+        "context_category": "MM Classification"
+    },
+    "community_agent": false,
+    "license": {
+        "type": "Apache-2.0"
+    }
 }
