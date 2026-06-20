@@ -8,7 +8,7 @@
 # https://github.com/OpenGVLab/InternImage/blob/master/classification/models/
 
 from __future__ import absolute_import, division, print_function
-import pkg_resources
+from importlib.metadata import version as package_version
 
 import DCNv3
 import torch
@@ -17,7 +17,7 @@ from torch.autograd import Function
 from torch.autograd.function import once_differentiable
 from torch.cuda.amp import custom_bwd, custom_fwd
 
-dcn_version = float(pkg_resources.get_distribution('DCNv3').version)
+dcn_version = float(package_version('DCNv3'))
 
 
 class DCNv3Function(Function):

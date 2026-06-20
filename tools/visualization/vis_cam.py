@@ -2,7 +2,7 @@
 import argparse
 import copy
 import math
-import pkg_resources
+from importlib.metadata import version as package_version
 from functools import partial
 from pathlib import Path
 
@@ -252,7 +252,7 @@ def main():
     # to fix the bug in #654.
     targets = None
     if args.target_category:
-        grad_cam_v = pkg_resources.get_distribution('grad_cam').version
+        grad_cam_v = package_version('grad_cam')
         if digit_version(grad_cam_v) >= digit_version('1.3.7'):
             from pytorch_grad_cam.utils.model_targets import \
                 ClassifierOutputTarget

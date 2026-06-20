@@ -1,0 +1,142 @@
+ARG tag_ref_name
+ARG REQUIREMENTS_FILE=dev_requirements.txt
+ARG RUNTIME_BASE_IMAGE=base-py-cuda-hardened
+ARG EXTRA_BUILDER_LIBS=""
+
+FROM nvidia/cuda:12.8.0-devel-ubuntu22.04 AS requirements-builder
+
+ENV LANG=C.UTF-8 \
+  PYTHONDONTWRITEBYTECODE=1 \
+  PYTHONUNBUFFERED=1 \
+  PIP_DISABLE_PIP_VERSION_CHECK=1 \
+  PIP_NO_CACHE_DIR=1 \
+  PIP_PREFER_BINARY=1 \
+  TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD=1 \
+  CUDA_HOME=/usr/local/cuda
+
+ARG REQUIREMENTS_FILE
+ARG EXTRA_BUILDER_LIBS
+RUN set -eux; \
+  apt-get update; \
+  apt-get install -y --no-install-recommends \
+    build-essential \
+    ca-certificates \
+    git \
+    libgeos-dev \
+    ninja-build \
+    pkg-config \
+    python3-pip \
+    python3.10 \
+    python3.10-dev \
+    python3.10-venv \
+    ${EXTRA_BUILDER_LIBS}; \
+  rm -rf /var/lib/apt/lists/*
+
+COPY ${REQUIREMENTS_FILE} /tmp/requirements.txt
+
+RUN set -eux; \
+  python3.10 -m venv /opt/venv; \
+  /opt/venv/bin/python -m ensurepip --upgrade; \
+  /opt/venv/bin/python -m pip install --no-cache-dir --upgrade pip wheel "setuptools<81"; \
+  /opt/venv/bin/python -m pip install --no-cache-dir requests "numpy<2"; \
+  /opt/venv/bin/python -m pip install --no-cache-dir \
+    --extra-index-url https://download.pytorch.org/whl/cu128 \
+    torch==2.7.1+cu128 torchvision==0.22.1+cu128; \
+  grep -Ev '^[[:space:]]*mmcv==' /tmp/requirements.txt > /tmp/requirements-no-mmcv.txt; \
+  if [ -s /tmp/requirements.txt ]; then \
+    mkdir -p /tmp/wheels; \
+    if grep -Eq '^[[:space:]]*mmcv==' /tmp/requirements.txt; then \
+      mkdir -p /tmp/mmcv-src; \
+      git clone --branch v2.1.0 --depth 1 https://github.com/open-mmlab/mmcv.git /tmp/mmcv-src/mmcv-2.1.0; \
+      cd /tmp/mmcv-src/mmcv-2.1.0; \
+      MAX_JOBS=4 FORCE_CUDA=1 MMCV_WITH_OPS=1 TORCH_CUDA_ARCH_LIST="7.5;8.0;8.6;8.9;9.0;12.0" \
+        /opt/venv/bin/python setup.py bdist_wheel; \
+      cp dist/*.whl /tmp/wheels/; \
+      cd /; \
+    fi; \
+    if [ -s /tmp/requirements-no-mmcv.txt ]; then \
+      /opt/venv/bin/python -m pip wheel --no-cache-dir --no-build-isolation --find-links /tmp/wheels -r /tmp/requirements-no-mmcv.txt -w /tmp/wheels; \
+    fi; \
+  else \
+    mkdir -p /tmp/wheels; \
+  fi
+
+FROM nvidia/cuda:12.8.0-runtime-ubuntu22.04 AS runtime
+
+ENV LANG=C.UTF-8 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD=1 \
+    CUDA_HOME=/usr/local/cuda
+
+ARG tag_ref_name
+ARG REQUIREMENTS_FILE
+ARG CACHEBUST=""
+
+COPY ${REQUIREMENTS_FILE} /tmp/requirements.txt
+
+RUN --mount=from=requirements-builder,source=/tmp/wheels,target=/tmp/wheels,ro \
+  set -eux; \
+  apt-get update; \
+  apt-get install -y --no-install-recommends \
+    ffmpeg \
+    libgeos-c1v5 \
+    libgl1 \
+    libglib2.0-0 \
+    libgomp1 \
+    libmagic1 \
+    libsm6 \
+    libx11-6 \
+    libxcb1 \
+    libxext6 \
+    libxrender1 \
+    python3-pip \
+    python3.10 \
+    python3.10-venv; \
+  ln -sf /usr/bin/python3.10 /usr/local/bin/python3; \
+  ln -sf /usr/bin/python3.10 /usr/local/bin/python; \
+  ln -sf /usr/bin/python3.10 /usr/bin/python; \
+  python3.10 -m venv /opt/venv; \
+  if [ -s /tmp/requirements.txt ]; then \
+    /opt/venv/bin/python -m ensurepip --upgrade; \
+    set -- /tmp/wheels/*.whl; \
+    if [ -e "$1" ]; then \
+      /opt/venv/bin/python -m pip install --no-cache-dir --no-compile --no-index /tmp/wheels/*.whl; \
+      /opt/venv/bin/python -c "import torch, mmcv, mmengine; from mmcv.ops import MultiScaleDeformableAttention; print(torch.__version__, torch.version.cuda, mmcv.__version__, mmengine.__version__, torch.cuda.get_arch_list())"; \
+      rm -rf \
+        /opt/venv/lib/python*/site-packages/pip* \
+        /opt/venv/lib/python*/site-packages/wheel* \
+        /opt/venv/bin/pip \
+        /opt/venv/bin/pip3 \
+        /opt/venv/bin/pip3.* \
+        /opt/venv/bin/easy_install \
+        /opt/venv/bin/easy_install-* \
+        /opt/venv/bin/wheel; \
+      /opt/venv/bin/python -c "from torch.utils.cpp_extension import CUDA_HOME; import mmcv, mmengine, pkg_resources; from mmcv.ops import MultiScaleDeformableAttention; print(CUDA_HOME, mmcv.__version__, mmengine.__version__, pkg_resources.__name__, MultiScaleDeformableAttention.__name__)"; \
+    fi; \
+  fi; \
+  rm -rf \
+    /var/lib/apt/lists/* \
+    /usr/bin/apt \
+    /usr/bin/apt-get \
+    /usr/bin/apt-cache \
+    /usr/bin/apt-mark \
+    /usr/bin/apt-key \
+    /usr/bin/dpkg \
+    /usr/bin/dpkg-deb \
+    /usr/bin/dpkg-query \
+    /usr/bin/dpkg-divert \
+    /usr/bin/git \
+    /usr/bin/curl \
+    /usr/bin/wget; \
+  find /opt/venv -type d -name '__pycache__' -prune -exec rm -rf {} +; \
+  find /opt/venv -type f \( -name '*.pyc' -o -name '*.pyo' \) -delete; \
+  find /opt/venv/lib/python*/site-packages -type d \( -name 'tests' -o -name 'test' \) -prune -exec rm -rf {} +; \
+  rm -rf /tmp/requirements.txt
+
+ENV PATH="/opt/venv/bin:$PATH" \
+    LD_LIBRARY_PATH="/usr/local/cuda/lib64:/usr/local/lib:/usr/lib" \
+    NVIDIA_VISIBLE_DEVICES=all \
+    NVIDIA_DRIVER_CAPABILITIES=compute,utility
+
+LABEL python_sdk_version="${tag_ref_name}"

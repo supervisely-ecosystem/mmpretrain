@@ -1,18 +1,26 @@
-# git+https://github.com/supervisely/supervisely.git@test-sdk-branch
-supervisely==6.73.331
+supervisely[agent,aug,model-benchmark] @ git+https://github.com/supervisely/supervisely.git@upgrade-protobuf
 
-# Torch
-torch==2.4.0
-torchvision==0.19.1
+# OpenMMLab 2.x wheels in this stack still target the NumPy 1.x ABI.
+numpy<2
 
-# AUGS
+# RTX 50 / Blackwell agents require CUDA 12.8-capable torch wheels.
+--extra-index-url https://download.pytorch.org/whl/cu128
+torch==2.7.1+cu128 ; platform_system == "Linux"
+torch==2.7.1 ; platform_system != "Linux"
+torchvision==0.22.1+cu128 ; platform_system == "Linux"
+torchvision==0.22.1 ; platform_system != "Linux"
+
+openmim==0.3.7
+mmengine==0.10.7
+# Build mmcv from source in supervisely/docker/Dockerfile.tmpl because OpenMMLab does not publish cu128 wheels.
+mmcv==2.1.0
+
 imgaug==0.4.0
 imagecorruptions==1.1.2
-
-# MM
-mmengine==0.10.7
-mmcv==2.2.0
-
+opencv-python==4.10.0.84
+requests-toolbelt==1.0.0
+cachetools==4.2.4
+yapf==0.40.1
 importlib_metadata==8.6.1
 modelindex==0.0.2
 einops==0.8.1
