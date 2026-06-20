@@ -1,4 +1,4 @@
-ARG tag_ref_name
+ARG tag_ref_name=6.73.567
 ARG REQUIREMENTS_FILE=dev_requirements.txt
 ARG RUNTIME_BASE_IMAGE=base-py-cuda-hardened
 ARG EXTRA_BUILDER_LIBS=""
@@ -69,7 +69,7 @@ ENV LANG=C.UTF-8 \
     TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD=1 \
     CUDA_HOME=/usr/local/cuda
 
-ARG tag_ref_name
+ARG tag_ref_name=6.73.567
 ARG REQUIREMENTS_FILE
 ARG CACHEBUST=""
 

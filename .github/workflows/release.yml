@@ -13,6 +13,7 @@ jobs:
     with:
       config_file: "supervisely/train/config.json"
       dockerfile_template_path: "supervisely/docker/Dockerfile.tmpl"
+      tag_ref_name: "6.73.567"
       cve_checks: true
       no_cache_requirements: true
 
