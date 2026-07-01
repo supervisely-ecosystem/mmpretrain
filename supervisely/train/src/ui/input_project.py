@@ -39,7 +39,8 @@ def restart(data, state):
 @g.my_app.ignore_errors_and_show_dialog_window()
 def download(api: sly.Api, task_id, context, state, app_logger):
     try:
-        sly.fs.mkdir(g.project_dir, remove_content_if_exists=True)
+        sly.fs.remove_dir(g.project_dir)
+        sly.fs.mkdir(g.project_dir)
         download_progress = get_progress_cb(
             progress_index, "Download project", g.project_info.items_count * 2
         )

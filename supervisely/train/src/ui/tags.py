@@ -185,7 +185,17 @@ def show_tags(api: sly.Api, task_id, context, state, app_logger):
 @g.my_app.ignore_errors_and_show_dialog_window()
 def use_tags(api: sly.Api, task_id, context, state, app_logger):
     global selected_tags
-    selected_tags = state["selectedTags"]
+    selected_tags = state.get("selectedTags") or []
+    if len(selected_tags) < 2:
+        g.my_app.show_modal_window("Select at least two tags before continuing.", level="warning")
+        g.api.app.set_fields(
+            g.task_id,
+            [
+                {"field": "state.selectedTags", "payload": selected_tags},
+                {"field": "data.done3", "payload": False},
+            ],
+        )
+        return
 
     fields = [
         {"field": "data.done3", "payload": True},
