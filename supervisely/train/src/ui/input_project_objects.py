@@ -257,7 +257,8 @@ def copy_tags(crop_anns):
 @g.my_app.ignore_errors_and_show_dialog_window()
 def download_project_objects(api: sly.Api, task_id, context, state, app_logger):
     try:
-        mkdir(g.project_dir, remove_content_if_exists=True)
+        sly.fs.remove_dir(g.project_dir)
+        mkdir(g.project_dir)
         project_meta_path = os.path.join(g.project_dir, "meta.json")
         g.project_meta = convert_object_tags(g.project_meta)
         project_meta_json = g.project_meta.to_json()

@@ -54,10 +54,16 @@ def init(project_meta: sly.ProjectMeta, data, state):
 
 
 def get_train_val_sets(project_dir, state):
-    split_method = state["splitMethod"]
+    split_method = state.get("splitMethod", "random")
     if split_method == "random":
-        train_count = state["randomSplit"]["count"]["train"]
-        val_count = state["randomSplit"]["count"]["val"]
+        random_split = state.get("randomSplit") or {}
+        split_count = random_split.get("count") or {}
+        total = split_count.get("total") or g.project_info.items_count
+        train_count = split_count.get("train")
+        val_count = split_count.get("val")
+        if train_count is None or val_count is None:
+            train_count = int(total / 100 * 80)
+            val_count = total - train_count
         train_set, val_set = sly.Project.get_train_val_splits_by_count(project_dir, train_count, val_count)
         return train_set, val_set
     elif split_method == "tags":
