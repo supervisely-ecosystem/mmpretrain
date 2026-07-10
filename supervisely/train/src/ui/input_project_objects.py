@@ -4,6 +4,7 @@ import random
 from collections import namedtuple
 import supervisely as sly
 import sly_globals as g
+from project_download_fs import cleanup_project_dir, prepare_project_dir, publish_project_dir
 from sly_train_progress import get_progress_cb, reset_progress
 from supervisely.io.fs import get_file_ext, get_file_name, mkdir
 from supervisely.io.json import dump_json_file, load_json_file
@@ -256,16 +257,21 @@ def copy_tags(crop_anns):
 @sly.timeit
 @g.my_app.ignore_errors_and_show_dialog_window()
 def download_project_objects(api: sly.Api, task_id, context, state, app_logger):
+    if g.project_download_in_progress:
+        g.my_app.show_modal_window("Project download is already in progress.", level="warning")
+        return
+
+    g.project_download_in_progress = True
+    temp_project_dir = None
     try:
-        sly.fs.remove_dir(g.project_dir)
-        mkdir(g.project_dir)
-        project_meta_path = os.path.join(g.project_dir, "meta.json")
+        temp_project_dir = prepare_project_dir(g.project_dir)
+        project_meta_path = os.path.join(temp_project_dir, "meta.json")
         g.project_meta = convert_object_tags(g.project_meta)
         project_meta_json = g.project_meta.to_json()
         dump_json_file(project_meta_json, project_meta_path)
         datasets = api.dataset.get_list(g.project_id, recursive=True)
         for dataset in datasets:
-            ds_dir = os.path.join(g.project_dir, dataset.name)
+            ds_dir = os.path.join(temp_project_dir, dataset.name)
             img_dir = os.path.join(ds_dir, "img")
             ann_dir = os.path.join(ds_dir, "ann")
 
@@ -302,11 +308,17 @@ def download_project_objects(api: sly.Api, task_id, context, state, app_logger):
         reset_progress(progress_index)
 
         global project_fs
+        project_fs = sly.Project(temp_project_dir, sly.OpenMode.READ)
+        publish_project_dir(temp_project_dir, g.project_dir)
+        temp_project_dir = None
         project_fs = sly.Project(g.project_dir, sly.OpenMode.READ)
         g.images_infos = create_img_infos(project_fs)
     except Exception as e:
         reset_progress(progress_index)
+        cleanup_project_dir(temp_project_dir)
         raise e
+    finally:
+        g.project_download_in_progress = False
 
     # items_count = g.project_stats["objects"]["total"]["objectsInDataset"]
     items_count = project_fs.total_items

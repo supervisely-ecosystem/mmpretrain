@@ -53,6 +53,8 @@ image_ids = [image_info.id for image_info in api.image.get_list(project_id=proje
 images_infos = None
 my_app.logger.info("Image ids are initialized", extra={"count": len(image_ids)})
 
+project_download_in_progress = False
+
 data_dir = sly.app.get_synced_data_dir()
 artifacts_dir = os.path.join(data_dir, "artifacts")
 sly.fs.mkdir(artifacts_dir)

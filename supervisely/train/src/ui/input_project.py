@@ -2,6 +2,7 @@ import os
 from collections import namedtuple
 
 import sly_globals as g
+from project_download_fs import cleanup_project_dir, prepare_project_dir, publish_project_dir
 from sly_train_progress import get_progress_cb, init_progress, reset_progress
 
 import supervisely as sly
@@ -38,16 +39,21 @@ def restart(data, state):
 @sly.timeit
 @g.my_app.ignore_errors_and_show_dialog_window()
 def download(api: sly.Api, task_id, context, state, app_logger):
+    if g.project_download_in_progress:
+        g.my_app.show_modal_window("Project download is already in progress.", level="warning")
+        return
+
+    g.project_download_in_progress = True
+    temp_project_dir = None
     try:
-        sly.fs.remove_dir(g.project_dir)
-        sly.fs.mkdir(g.project_dir)
+        temp_project_dir = prepare_project_dir(g.project_dir)
         download_progress = get_progress_cb(
             progress_index, "Download project", g.project_info.items_count * 2
         )
         sly.download_project(
             g.api,
             g.project_id,
-            g.project_dir,
+            temp_project_dir,
             cache=g.my_app.cache,
             progress_cb=download_progress,
             only_image_tags=True,
@@ -56,10 +62,16 @@ def download(api: sly.Api, task_id, context, state, app_logger):
         reset_progress(progress_index)
 
         global project_fs
+        project_fs = sly.Project(temp_project_dir, sly.OpenMode.READ)
+        publish_project_dir(temp_project_dir, g.project_dir)
+        temp_project_dir = None
         project_fs = sly.Project(g.project_dir, sly.OpenMode.READ)
     except Exception as e:
         reset_progress(progress_index)
+        cleanup_project_dir(temp_project_dir)
         raise e
+    finally:
+        g.project_download_in_progress = False
 
     items_count = project_fs.total_items
     train_percent = 80
